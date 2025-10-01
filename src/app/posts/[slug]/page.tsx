@@ -1,13 +1,9 @@
 import { getPostsFromCache, getWordCount } from "@/lib/notion";
 import { format } from "date-fns";
 import { SmartImage } from "@/components/smart-image";
-import Image from "next/image";
 import { notFound } from "next/navigation";
 import type { Metadata, ResolvingMetadata } from "next";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
-import rehypeRaw from "rehype-raw";
-import rehypeSlug from "rehype-slug";
+import MarkdownClient from "@/components/markdown-client";
 
 import { Badge } from "@/components/ui/badge";
 import { calculateReadingTime } from "@/lib/utils";
@@ -158,13 +154,9 @@ export default async function PostPage({ params }: PostPageProps) {
           </header>
 
           <div className="mt-10 text-base leading-relaxed text-foreground">
-            <ReactMarkdown
-              components={components}
-              remarkPlugins={[remarkGfm]}
-              rehypePlugins={[rehypeRaw, rehypeSlug]}
-            >
+            <MarkdownClient components={components}>
               {post.content}
-            </ReactMarkdown>
+            </MarkdownClient>
           </div>
           </article>
         </main>
