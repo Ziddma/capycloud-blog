@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "pnpm run cache:posts && next dev --turbopack",
     "build": "pnpm run cache:posts && pnpm run next-on-pages",
-    "next-on-pages": "npx @cloudflare/next-on-pages build",
+    "next-on-pages": "npx @cloudflare/next-on-pages",
     "start": "next start",
     "lint": "next lint",
     "cache:posts": "tsx scripts/cache-posts.ts"
@@ -71,3 +71,4 @@
   },
   "packageManager": "pnpm@10.11.0"
 }
+
