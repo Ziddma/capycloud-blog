@@ -3,8 +3,6 @@ import { NotionToMarkdown } from "notion-to-md";
 import type { Annotations } from "notion-to-md/build/types";
 import { PageObjectResponse } from "@notionhq/client/";
 import type { MdBlock } from "notion-to-md/build/types";
-import fs from "fs";
-import path from "path";
 import GithubSlugger from "github-slugger";
 
 export const notion = new Client({ auth: process.env.NOTION_TOKEN });
@@ -213,18 +211,9 @@ export function getWordCount(content: string): number {
   return cleanText.split(" ").length;
 }
 
-export function getPostsFromCache(): Post[] {
-  const cachePath = path.join(process.cwd(), "posts-cache.json");
-  if (fs.existsSync(cachePath)) {
-    try {
-      const cache = fs.readFileSync(cachePath, "utf-8");
-      return JSON.parse(cache);
-    } catch (error) {
-      console.error("Error reading posts cache:", error);
-      return [];
-    }
-  }
-  return [];
+export async function getPostsFromCache(): Promise<Post[]> {
+  const data = await import("../../posts-cache.json");
+  return (data.default || data) as Post[];
 }
 
 export async function fetchPublishedPosts() {
@@ -252,7 +241,7 @@ export async function fetchPublishedPosts() {
 }
 
 export async function getPost(slug: string): Promise<Post | null> {
-  const posts = getPostsFromCache();
+  const posts = await getPostsFromCache();
   const post = posts.find((p) => p.slug === slug);
   return post || null;
 }

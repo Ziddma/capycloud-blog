@@ -5,8 +5,10 @@ import { LayoutTextFlip } from "@/components/ui/layout-text-flip";
 import { Compare } from "@/components/ui/compare";
 import { WavyBackground } from "@/components/ui/wavy-background";
 
-export default function Home() {
-  const posts = getPostsFromCache();
+export const runtime = "edge";
+
+export default async function Home() {
+  const posts = await getPostsFromCache();
 
   return (
     <div className="space-y-16">
