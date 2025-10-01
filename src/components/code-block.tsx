@@ -207,19 +207,21 @@ export function CodeBlock({ code, language = "plaintext" }: CodeBlockProps) {
     }
   }
 
-  // @ts-ignore
-  const containerClass = accentPalette !== null
-    ? accentPalette.container
-    : isDark
-    ? "border-border/40 bg-muted/10"
-    : "border-zinc-200 bg-zinc-50";
+  const resolveAccentPalette = (): AccentPalette => {
+    if (accentPalette) return accentPalette;
+    if (isDark) {
+      return {
+        container: "border-border/40 bg-muted/10",
+        button: "border border-border/60 bg-background/80 text-muted-foreground hover:bg-muted",
+      } satisfies AccentPalette;
+    }
+    return {
+      container: "border-zinc-200 bg-zinc-50",
+      button: "border border-zinc-200 bg-white text-zinc-600 hover:bg-zinc-100",
+    } satisfies AccentPalette;
+  };
 
-    // @ts-ignore
-  const buttonClass = accentPalette !== null
-    ? accentPalette.button
-    : isDark
-    ? "border border-border/60 bg-background/80 text-muted-foreground hover:bg-muted"
-    : "border border-zinc-200 bg-white text-zinc-600 hover:bg-zinc-100";
+  const { container: containerClass, button: buttonClass } = resolveAccentPalette();
 
   const syntaxRenderer = processed.hasSegments ? renderWithInlineColors : undefined;
 
