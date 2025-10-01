@@ -23,7 +23,7 @@ export async function generateMetadata(
   _parent: ResolvingMetadata
 ): Promise<Metadata> {
   const { slug } = await params;
-  const posts = getPostsFromCache();
+  const posts = await getPostsFromCache();
   const post = posts.find((p) => p.slug === slug);
 
   if (!post) return { title: "Post Not Found" };
@@ -65,9 +65,11 @@ export async function generateMetadata(
   };
 }
 
+export const runtime = "edge";
+
 export default async function PostPage({ params }: PostPageProps) {
   const { slug } = await params;
-  const posts = getPostsFromCache();
+  const posts = await getPostsFromCache();
   const post = posts.find((p) => p.slug === slug);
 
   if (!post) notFound();

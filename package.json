@@ -3,13 +3,13 @@
     "version":  "0.1.0",
     "private":  true,
     "scripts":  {
-  "dev": "pnpm run cache:posts && next dev --turbopack",
-  "prebuild": "pnpm run cache:posts",
-  "build": "next build",
-  "cf-build": "next-on-pages",
-  "start": "next start",
-  "lint": "next lint",
-  "cache:posts": "tsx scripts/cache-posts.ts"
+                    "dev":  "pnpm run cache:posts \u0026\u0026 next dev --turbopack",
+                    "prebuild":  "pnpm run cache:posts",
+                    "build":  "next build",
+                    "cf-build":  "next-on-pages",
+                    "start":  "next start",
+                    "lint":  "next lint",
+                    "cache:posts":  "tsx scripts/cache-posts.ts"
                 },
     "dependencies":  {
                          "@hookform/resolvers":  "^5.0.1",
@@ -68,7 +68,8 @@
                             "tsx":  "^4.7.2",
                             "tw-animate-css":  "^1.3.4",
                             "typescript":  "^5",
-                            "wrangler":  "^4.40.3"
+                            "wrangler":  "^4.40.3",
+                            "vercel":  "47.0.4"
                         },
     "packageManager":  "pnpm@10.11.0"
 }
