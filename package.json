@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "pnpm run cache:posts && next dev --turbopack",
-    "build": "pnpm run cache:posts && pnpm next-on-pages build",
-    "next-on-pages": "npx @cloudflare/next-on-pages",
+    "build": "pnpm run cache:posts && pnpm run next-on-pages",
+    "next-on-pages": "npx @cloudflare/next-on-pages build",
     "start": "next start",
     "lint": "next lint",
     "cache:posts": "tsx scripts/cache-posts.ts"
