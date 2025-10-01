@@ -1,6 +1,7 @@
 import { getPostsFromCache, Post } from "@/lib/notion";
 import { MetadataRoute } from "next";
 
+export const runtime = "edge";
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://your-site.com";
 

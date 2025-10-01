@@ -13,6 +13,7 @@ import {
 import { Badge } from "./ui/badge";
 import { CodeBlock } from "@/components/code-block";
 
+
 type ElementWithChildren = React.ReactElement<{ children?: React.ReactNode }>;
 
 const isElementWithChildren = (

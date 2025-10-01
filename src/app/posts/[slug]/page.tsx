@@ -28,7 +28,7 @@ export async function generateMetadata(
 
   if (!post) return { title: "Post Not Found" };
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://your-site.com";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://capycloud.my.id";
 
   return {
     title: post.title,
