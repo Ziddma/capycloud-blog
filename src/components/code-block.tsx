@@ -207,15 +207,19 @@ export function CodeBlock({ code, language = "plaintext" }: CodeBlockProps) {
     }
   }
 
-  const containerClass = accentPalette?.container ?? (
-    isDark ? "border-border/40 bg-muted/10" : "border-zinc-200 bg-zinc-50"
-  );
+  // @ts-ignore
+  const containerClass = accentPalette !== null
+    ? accentPalette.container
+    : isDark
+    ? "border-border/40 bg-muted/10"
+    : "border-zinc-200 bg-zinc-50";
 
-  const buttonClass = accentPalette?.button ?? (
-    isDark
-      ? "border border-border/60 bg-background/80 text-muted-foreground hover:bg-muted"
-      : "border border-zinc-200 bg-white text-zinc-600 hover:bg-zinc-100"
-  );
+    // @ts-ignore
+  const buttonClass = accentPalette !== null
+    ? accentPalette.button
+    : isDark
+    ? "border border-border/60 bg-background/80 text-muted-foreground hover:bg-muted"
+    : "border border-zinc-200 bg-white text-zinc-600 hover:bg-zinc-100";
 
   const syntaxRenderer = processed.hasSegments ? renderWithInlineColors : undefined;
 
@@ -254,3 +258,4 @@ export function CodeBlock({ code, language = "plaintext" }: CodeBlockProps) {
     </div>
   );
 }
+
