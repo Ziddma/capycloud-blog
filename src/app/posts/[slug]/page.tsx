@@ -1,4 +1,4 @@
-import { getPostsFromCache, getWordCount } from "@/lib/notion";
+import { getPost, getWordCount } from "@/lib/notion";
 import { format } from "date-fns";
 import { SmartImage } from "@/components/smart-image";
 import { notFound } from "next/navigation";
@@ -6,9 +6,11 @@ import type { Metadata, ResolvingMetadata } from "next";
 import MarkdownClient from "@/components/markdown-client";
 
 import { Badge } from "@/components/ui/badge";
-import { calculateReadingTime } from "@/lib/utils";
-import { components } from "@/components/mdx-component";
+import { buildNotionImageProxy, calculateReadingTime } from "@/lib/utils";
 import { PostToc } from "@/components/post-toc";
+
+export const dynamic = "force-dynamic";
+export const fetchCache = "force-no-store";
 
 interface PostPageProps {
   params: Promise<{ slug: string }>;
@@ -19,12 +21,16 @@ export async function generateMetadata(
   _parent: ResolvingMetadata
 ): Promise<Metadata> {
   const { slug } = await params;
-  const posts = await getPostsFromCache();
-  const post = posts.find((p) => p.slug === slug);
+  const post = await getPost(slug);
 
   if (!post) return { title: "Post Not Found" };
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://capycloud.my.id";
+  const coverImage =
+    buildNotionImageProxy(post.originalCoverImage ?? post.coverImage, {
+      absolute: true,
+      baseUrl: siteUrl,
+    }) || `${siteUrl}/opengraph-image.png`;
 
   return {
     title: post.title,
@@ -40,7 +46,7 @@ export async function generateMetadata(
       tags: post.tags,
       images: [
         {
-          url: post.coverImage || `${siteUrl}/opengraph-image.png`,
+          url: coverImage,
           width: 1200,
           height: 630,
           alt: post.title,
@@ -53,7 +59,7 @@ export async function generateMetadata(
       description: post.description,
       images: [
         {
-          url: post.coverImage || `${siteUrl}/opengraph-image.png`,
+          url: coverImage,
           alt: post.title,
         },
       ],
@@ -61,25 +67,27 @@ export async function generateMetadata(
   };
 }
 
-export const runtime = "edge";
-
 export default async function PostPage({ params }: PostPageProps) {
   const { slug } = await params;
-  const posts = await getPostsFromCache();
-  const post = posts.find((p) => p.slug === slug);
+  const post = await getPost(slug);
 
   if (!post) notFound();
 
   const wordCount = post.content ? getWordCount(post.content) : 0;
   const readingTime = calculateReadingTime(wordCount);
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://your-site.com";
+  const coverImage =
+    buildNotionImageProxy(post.originalCoverImage ?? post.coverImage, {
+      absolute: true,
+      baseUrl: siteUrl,
+    }) || `${siteUrl}/opengraph-image.png`;
 
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
     headline: post.title,
     description: post.description,
-    image: post.coverImage || `${siteUrl}/opengraph-image.png`,
+    image: coverImage,
     datePublished: new Date(post.date).toISOString(),
     author: { "@type": "Person", name: post.author || "Guest Author" },
     publisher: {
@@ -154,9 +162,7 @@ export default async function PostPage({ params }: PostPageProps) {
           </header>
 
           <div className="mt-10 text-base leading-relaxed text-foreground">
-            <MarkdownClient components={components}>
-              {post.content}
-            </MarkdownClient>
+            <MarkdownClient>{post.content}</MarkdownClient>
           </div>
           </article>
         </main>

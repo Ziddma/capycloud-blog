@@ -4,8 +4,13 @@ import type { Annotations } from "notion-to-md/build/types";
 import { PageObjectResponse } from "@notionhq/client/";
 import type { MdBlock } from "notion-to-md/build/types";
 import GithubSlugger from "github-slugger";
+import { createCacheRequest, getRuntimeCache } from "./runtime-cache";
+import { buildNotionImageProxy } from "./utils";
 
 export const notion = new Client({ auth: process.env.NOTION_TOKEN });
+
+const POSTS_CACHE_URL = "https://notion-blog.internal/cache/posts-v1";
+const DEFAULT_CACHE_TTL_SECONDS = 600;
 
 function collectHeadings(blocks: MdBlock[], slugger: GithubSlugger) {
   const items: Array<{ level: number; text: string; slug: string }> = [];
@@ -40,6 +45,7 @@ export interface Post {
   title: string;
   slug: string;
   coverImage?: string;
+  originalCoverImage?: string;
   description: string;
   date: string;
   content: string;
@@ -211,9 +217,9 @@ export function getWordCount(content: string): number {
   return cleanText.split(" ").length;
 }
 
-export async function getPostsFromCache(): Promise<Post[]> {
-  const data = await import("../../posts-cache.json");
-  return (data.default || data) as Post[];
+export interface FetchAllPostsOptions {
+  forceRefresh?: boolean;
+  cacheTtlSeconds?: number;
 }
 
 export async function fetchPublishedPosts() {
@@ -240,8 +246,100 @@ export async function fetchPublishedPosts() {
   return posts.results as PageObjectResponse[];
 }
 
-export async function getPost(slug: string): Promise<Post | null> {
-  const posts = await getPostsFromCache();
+export async function fetchAllPosts(
+  options: FetchAllPostsOptions = {}
+): Promise<Post[]> {
+  const { forceRefresh = false, cacheTtlSeconds = DEFAULT_CACHE_TTL_SECONDS } = options;
+  const cache = getRuntimeCache();
+  const cacheRequest = createCacheRequest(POSTS_CACHE_URL);
+
+  if (!forceRefresh && cache && cacheRequest) {
+    try {
+      const cached = await cache.match(cacheRequest);
+      if (cached) {
+        return (await cached.clone().json()) as Post[];
+      }
+    } catch (error) {
+      console.warn("Failed reading posts from Cache API, refetching from Notion", error);
+    }
+  }
+
+  const notionPages = await fetchPublishedPosts();
+  const allPosts: Post[] = [];
+
+  for (const page of notionPages) {
+    const postDetails = await getPostFromNotion(page.id);
+    if (!postDetails) continue;
+
+    const slugger = new GithubSlugger();
+    const fixedHeadings = postDetails.headings.map((heading) => ({
+      ...heading,
+      slug: slugger.slug(heading.text),
+    }));
+
+    allPosts.push({
+      ...postDetails,
+      headings: fixedHeadings,
+    });
+  }
+
+  if (cache && cacheRequest) {
+    try {
+      const response = new Response(JSON.stringify(allPosts), {
+        headers: {
+          "Cache-Control": `public, max-age=0, s-maxage=${cacheTtlSeconds}`,
+          "Content-Type": "application/json",
+        },
+      });
+      await cache.put(cacheRequest, response);
+    } catch (error) {
+      console.warn("Failed writing posts to Cache API", error);
+    }
+  }
+
+  return allPosts;
+}
+
+export async function invalidatePostsCache() {
+  const cache = getRuntimeCache();
+  if (!cache) return;
+  const cacheRequest = createCacheRequest(POSTS_CACHE_URL);
+  if (!cacheRequest) return;
+  try {
+    await cache.delete(cacheRequest);
+  } catch (error) {
+    console.warn("Failed deleting posts cache", error);
+  }
+}
+
+export async function getPostsFromCache(
+  options: FetchAllPostsOptions = {}
+): Promise<Post[]> {
+  try {
+    return await fetchAllPosts(options);
+  } catch (error) {
+    console.error("Falling back to local posts cache due to fetch error", error);
+    const data = await import("../../posts-cache.json");
+    const cached = (data.default || data) as Post[];
+    return cached.map((post) => {
+      const original =
+        post.originalCoverImage ??
+        (post.coverImage && post.coverImage.startsWith("http") ? post.coverImage : undefined);
+
+      return {
+        ...post,
+        originalCoverImage: original,
+        coverImage: buildNotionImageProxy(original ?? post.coverImage) ?? post.coverImage,
+      };
+    });
+  }
+}
+
+export async function getPost(
+  slug: string,
+  options: FetchAllPostsOptions = {}
+): Promise<Post | null> {
+  const posts = await getPostsFromCache(options);
   const post = posts.find((p) => p.slug === slug);
   return post || null;
 }
@@ -266,6 +364,21 @@ export async function getPostFromNotion(pageId: string): Promise<Post | null> {
       firstParagraph.slice(0, 160) + (firstParagraph.length > 160 ? "..." : "");
 
     const properties = page.properties as any;
+    const resolvedCoverImage = (() => {
+      const featured = properties["Featured Image"];
+      if (featured?.type === "files" && Array.isArray(featured.files) && featured.files.length) {
+        const file = featured.files[0];
+        if (file.type === "external") return file.external.url;
+        if (file.type === "file") return file.file.url;
+      }
+      if (typeof featured?.url === "string" && featured.url) {
+        return featured.url;
+      }
+      if (page.cover?.type === "external") return page.cover.external.url;
+      if (page.cover?.type === "file") return page.cover.file.url;
+      return undefined;
+    })();
+
     const post: Post = {
       id: page.id,
       title: properties.Title.title[0]?.plain_text || "Untitled",
@@ -274,20 +387,8 @@ export async function getPostFromNotion(pageId: string): Promise<Post | null> {
           .toLowerCase()
           .replace(/[^a-z0-9]+/g, "-")
           .replace(/^-+|-+$/g, "") || "untitled",
-      coverImage: (() => {
-        const featured = properties["Featured Image"];
-        if (featured?.type === "files" && Array.isArray(featured.files) && featured.files.length) {
-          const file = featured.files[0];
-          if (file.type === "external") return file.external.url;
-          if (file.type === "file") return file.file.url;
-        }
-        if (typeof featured?.url === "string" && featured.url) {
-          return featured.url;
-        }
-        if (page.cover?.type === "external") return page.cover.external.url;
-        if (page.cover?.type === "file") return page.cover.file.url;
-        return undefined;
-      })(),
+      coverImage: buildNotionImageProxy(resolvedCoverImage),
+      originalCoverImage: resolvedCoverImage,
       description,
       date:
         properties["Published Date"]?.date?.start || new Date().toISOString(),
@@ -304,4 +405,3 @@ export async function getPostFromNotion(pageId: string): Promise<Post | null> {
     return null;
   }
 }
-

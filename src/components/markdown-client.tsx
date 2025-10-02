@@ -2,20 +2,19 @@
 
 import React from "react";
 import ReactMarkdown from "react-markdown";
-import type { Components } from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
 import rehypeSlug from "rehype-slug";
+import { components as markdownComponents } from "./mdx-component";
 
 interface MarkdownClientProps {
   children: string;
-  components?: Components;
 }
 
-export default function MarkdownClient({ children, components }: MarkdownClientProps) {
+export default function MarkdownClient({ children }: MarkdownClientProps) {
   return (
     <ReactMarkdown
-      components={components}
+      components={markdownComponents}
       remarkPlugins={[remarkGfm]}
       rehypePlugins={[rehypeRaw, rehypeSlug]}
     >

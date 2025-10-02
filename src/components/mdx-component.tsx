@@ -21,7 +21,7 @@ const isElementWithChildren = (
 ): node is ElementWithChildren =>
   React.isValidElement<{ children?: React.ReactNode }>(node);
 
-const components = {
+export const components = {
   // Headings
   h1: ({ className, children, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
     <h1
@@ -242,5 +242,3 @@ const components = {
     </TableHead>
   ),
 };
-
-export { components };
