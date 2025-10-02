@@ -1,6 +1,8 @@
+"use client";
+
 import { cn } from "@/lib/utils";
-import Image from "next/image";
 import { SmartImage } from "@/components/smart-image";
+import type { Components } from "react-markdown";
 import * as React from "react";
 import {
   Table,
@@ -21,7 +23,7 @@ const isElementWithChildren = (
 ): node is ElementWithChildren =>
   React.isValidElement<{ children?: React.ReactNode }>(node);
 
-const components = {
+const components: Components = {
   // Headings
   h1: ({ className, children, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
     <h1

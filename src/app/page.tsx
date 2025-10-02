@@ -5,7 +5,7 @@ import { LayoutTextFlip } from "@/components/ui/layout-text-flip";
 import { Compare } from "@/components/ui/compare";
 import { WavyBackground } from "@/components/ui/wavy-background";
 
-export const runtime = "edge";
+export const runtime = "nodejs";
 
 export default async function Home() {
   const posts = await getPostsFromCache();

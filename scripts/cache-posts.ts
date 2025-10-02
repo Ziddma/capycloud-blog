@@ -33,6 +33,11 @@ async function cachePosts() {
     console.log(`✅ Successfully cached ${allPosts.length} posts.`);
   } catch (error) {
     console.error("Error caching posts:", error);
+    const cachePath = path.join(process.cwd(), "posts-cache.json");
+    if (fs.existsSync(cachePath)) {
+      console.warn("Using existing cached posts because Notion fetch failed.");
+      return;
+    }
     process.exit(1);
   }
 }

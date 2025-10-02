@@ -7,7 +7,6 @@ import MarkdownClient from "@/components/markdown-client";
 
 import { Badge } from "@/components/ui/badge";
 import { calculateReadingTime } from "@/lib/utils";
-import { components } from "@/components/mdx-component";
 import { PostToc } from "@/components/post-toc";
 
 interface PostPageProps {
@@ -61,7 +60,7 @@ export async function generateMetadata(
   };
 }
 
-export const runtime = "edge";
+export const runtime = "nodejs";
 
 export default async function PostPage({ params }: PostPageProps) {
   const { slug } = await params;
@@ -154,7 +153,7 @@ export default async function PostPage({ params }: PostPageProps) {
           </header>
 
           <div className="mt-10 text-base leading-relaxed text-foreground">
-            <MarkdownClient components={components}>
+            <MarkdownClient>
               {post.content}
             </MarkdownClient>
           </div>
