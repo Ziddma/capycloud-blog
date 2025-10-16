@@ -43,6 +43,18 @@
       "namedRegex": "^/favicon\\.ico(?:/)?$"
     },
     {
+      "page": "/images/notion",
+      "regex": "^/images/notion(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/images/notion(?:/)?$"
+    },
+    {
+      "page": "/images/notion-cover",
+      "regex": "^/images/notion\\-cover(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/images/notion\\-cover(?:/)?$"
+    },
+    {
       "page": "/robots.txt",
       "regex": "^/robots\\.txt(?:/)?$",
       "routeKeys": {},

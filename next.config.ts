@@ -22,8 +22,13 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  outputFileTracingExcludes: {
+    "*": [
+      "**/@img/sharp*/**",
+      "**/sharp/lib/**",
+    ],
+  },
   /* config options here */
 };
 
 export default nextConfig;
-

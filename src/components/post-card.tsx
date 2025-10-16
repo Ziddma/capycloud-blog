@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Image from "next/image";
 import { format } from "date-fns";
 import { Post, getWordCount } from "@/lib/notion";
 import { Badge } from "@/components/ui/badge";
@@ -11,6 +10,7 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 import { Clock, Calendar, ArrowUpRight } from "lucide-react";
+import { SmartImage } from "@/components/smart-image";
 
 interface PostCardProps {
   post: Post;
@@ -28,12 +28,15 @@ export default function PostCard({ post }: PostCardProps) {
         aria-label={post.title}
       />
       <div className="relative aspect-[16/9] w-full overflow-hidden rounded-t-lg">
-        {post.coverImage ? (
-          <Image
-            src={post.coverImage}
+        {(post.coverImage || post.coverImageOriginal) ? (
+          <SmartImage
+            src={post.coverImage ?? post.coverImageOriginal ?? "/placeholder.png"}
+            fallbackSrc={post.coverImageOriginal ?? "/images/fallback-cover.png"}
             alt={post.title}
             fill
             className="object-cover transition-transform duration-300 group-hover:scale-105"
+            maxRetries={2}
+            retryDelayMs={800}
           />
         ) : (
           <div className="absolute inset-0 bg-muted/80" />

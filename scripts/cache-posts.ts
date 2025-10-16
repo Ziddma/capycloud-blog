@@ -1,3 +1,4 @@
+import "./load-env";
 import { fetchPublishedPosts, getPostFromNotion } from "../src/lib/notion";
 import fs from "fs";
 import path from "path";
@@ -38,7 +39,10 @@ async function cachePosts() {
       console.warn("Using existing cached posts because Notion fetch failed.");
       return;
     }
-    process.exit(1);
+    console.warn(
+      "No cached posts were found, writing an empty cache so the build can proceed. Verify NOTION_TOKEN/NOTION_DATABASE_ID."
+    );
+    fs.writeFileSync(cachePath, JSON.stringify([], null, 2));
   }
 }
 

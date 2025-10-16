@@ -24,6 +24,7 @@ export async function generateMetadata(
   if (!post) return { title: "Post Not Found" };
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://capycloud.my.id";
+  const coverImage = post.coverImage ?? post.coverImageOriginal ?? `${siteUrl}/opengraph-image.png`;
 
   return {
     title: post.title,
@@ -39,7 +40,7 @@ export async function generateMetadata(
       tags: post.tags,
       images: [
         {
-          url: post.coverImage || `${siteUrl}/opengraph-image.png`,
+          url: coverImage,
           width: 1200,
           height: 630,
           alt: post.title,
@@ -52,7 +53,7 @@ export async function generateMetadata(
       description: post.description,
       images: [
         {
-          url: post.coverImage || `${siteUrl}/opengraph-image.png`,
+          url: coverImage,
           alt: post.title,
         },
       ],
@@ -72,13 +73,15 @@ export default async function PostPage({ params }: PostPageProps) {
   const wordCount = post.content ? getWordCount(post.content) : 0;
   const readingTime = calculateReadingTime(wordCount);
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://your-site.com";
+  const coverImage = post.coverImage ?? post.coverImageOriginal ?? `${siteUrl}/opengraph-image.png`;
+  const coverImageFallback = post.coverImageOriginal && post.coverImageOriginal !== coverImage ? post.coverImageOriginal : undefined;
 
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
     headline: post.title,
     description: post.description,
-    image: post.coverImage || `${siteUrl}/opengraph-image.png`,
+    image: coverImage,
     datePublished: new Date(post.date).toISOString(),
     author: { "@type": "Person", name: post.author || "Guest Author" },
     publisher: {
@@ -99,17 +102,17 @@ export default async function PostPage({ params }: PostPageProps) {
       <div className="mx-auto w-full max-w-4xl px-4 sm:px-6 lg:pl-0 lg:pr-28 xl:mt-8">
         <main className="px-auto xl:pl-0 2xl:pl-0">
           <article className="w-full">
-          {post.coverImage && (
+          {(post.coverImage || post.coverImageOriginal) && (
             <div className="relative mb-10 aspect-[16/9] overflow-hidden rounded-3xl border border-border/40 bg-muted/20">
               <SmartImage
-                src={post.coverImage ?? "/placeholder.png"}
+                src={coverImage}
+                fallbackSrc={coverImageFallback ?? "/images/fallback-cover.png"}
                 alt={post.title}
                 width={1200}
                 height={630}
                 priority
-                fallbackSrc="/images/fallback-cover.png"   
-                maxRetries={5}                              
-                retryDelayMs={2000}                         
+                maxRetries={5}
+                retryDelayMs={2000}
               />
             </div>
           )}

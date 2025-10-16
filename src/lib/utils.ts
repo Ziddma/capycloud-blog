@@ -10,3 +10,4 @@ export function calculateReadingTime(wordCount: number): string {
   const minutes = Math.ceil(wordCount / WORDS_PER_MINUTE);
   return `${minutes} min read`;
 }
+export { buildNotionImageProxy, shouldProxyNotionImage, NOTION_IMAGE_PROXY_PATH } from "./image-proxy";

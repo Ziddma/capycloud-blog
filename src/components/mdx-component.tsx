@@ -2,6 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import { SmartImage } from "@/components/smart-image";
+import { buildNotionImageProxy } from "@/lib/image-proxy";
 import type { Components } from "react-markdown";
 import * as React from "react";
 import {
@@ -204,16 +205,18 @@ const components: Components = {
       return null;
     }
 
+    const proxiedSrc = buildNotionImageProxy(src) ?? src;
+
     return (
       <SmartImage
-        src={src}
+        src={proxiedSrc}
+        fallbackSrc={typeof src === "string" ? src : undefined}
         alt={alt || ""}
         width={1024}
         height={576}
         className="h-auto w-full object-contain"
         maxRetries={4}
         retryDelayMs={1500}
-        fallbackSrc="/images/image-fallback.png"
         wrapper="span"
         wrapperClassName="my-6 block overflow-hidden rounded-xl border border-border/40"
       />

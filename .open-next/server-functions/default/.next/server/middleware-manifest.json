@@ -1,6 +1,75 @@
 {
   "version": 3,
   "middleware": {},
-  "functions": {},
+  "functions": {
+    "/images/notion-cover/route": {
+      "files": [
+        "server/server-reference-manifest.js",
+        "server/app/images/notion-cover/route_client-reference-manifest.js",
+        "server/middleware-build-manifest.js",
+        "server/middleware-react-loadable-manifest.js",
+        "server/next-font-manifest.js",
+        "server/interception-route-rewrite-manifest.js",
+        "server/edge-runtime-webpack.js",
+        "server/edge-chunks/570.js",
+        "server/app/images/notion-cover/route.js"
+      ],
+      "name": "app/images/notion-cover/route",
+      "page": "/images/notion-cover/route",
+      "matchers": [
+        {
+          "regexp": "^/images/notion\\-cover$",
+          "originalSource": "/images/notion-cover"
+        }
+      ],
+      "wasm": [],
+      "assets": [],
+      "env": {
+        "__NEXT_BUILD_ID": "-2lHSPmDwtyn3gB9qWvhy",
+        "NEXT_SERVER_ACTIONS_ENCRYPTION_KEY": "Ol4MZABlpWlis2Kh73ZHg3OaNOT0mg24uXQVMcSVs9M=",
+        "__NEXT_PREVIEW_MODE_ID": "e93a905dbb600fa00a49b62c781d4712",
+        "__NEXT_PREVIEW_MODE_ENCRYPTION_KEY": "529a16f1844274dadc37b982a10acffd83777be5d57b11520fb6cf0fdcb678c4",
+        "__NEXT_PREVIEW_MODE_SIGNING_KEY": "af828d1732eb0c5aa827aaa66265f5fd6b187311fde4dccda850b2b01d15cf66"
+      },
+      "regions": [
+        "iad1",
+        "cdg1"
+      ]
+    },
+    "/images/notion/route": {
+      "files": [
+        "server/server-reference-manifest.js",
+        "server/app/images/notion/route_client-reference-manifest.js",
+        "server/middleware-build-manifest.js",
+        "server/middleware-react-loadable-manifest.js",
+        "server/next-font-manifest.js",
+        "server/interception-route-rewrite-manifest.js",
+        "server/edge-runtime-webpack.js",
+        "server/edge-chunks/570.js",
+        "server/app/images/notion/route.js"
+      ],
+      "name": "app/images/notion/route",
+      "page": "/images/notion/route",
+      "matchers": [
+        {
+          "regexp": "^/images/notion$",
+          "originalSource": "/images/notion"
+        }
+      ],
+      "wasm": [],
+      "assets": [],
+      "env": {
+        "__NEXT_BUILD_ID": "-2lHSPmDwtyn3gB9qWvhy",
+        "NEXT_SERVER_ACTIONS_ENCRYPTION_KEY": "Ol4MZABlpWlis2Kh73ZHg3OaNOT0mg24uXQVMcSVs9M=",
+        "__NEXT_PREVIEW_MODE_ID": "e93a905dbb600fa00a49b62c781d4712",
+        "__NEXT_PREVIEW_MODE_ENCRYPTION_KEY": "529a16f1844274dadc37b982a10acffd83777be5d57b11520fb6cf0fdcb678c4",
+        "__NEXT_PREVIEW_MODE_SIGNING_KEY": "af828d1732eb0c5aa827aaa66265f5fd6b187311fde4dccda850b2b01d15cf66"
+      },
+      "regions": [
+        "iad1",
+        "cdg1"
+      ]
+    }
+  },
   "sortedMiddleware": []
 }

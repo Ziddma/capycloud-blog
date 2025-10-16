@@ -4,6 +4,11 @@ import type { Annotations } from "notion-to-md/build/types";
 import { PageObjectResponse } from "@notionhq/client/";
 import type { MdBlock } from "notion-to-md/build/types";
 import GithubSlugger from "github-slugger";
+import {
+  buildNotionImageProxy,
+  NOTION_IMAGE_PROXY_PATH,
+  shouldProxyNotionImage,
+} from "./image-proxy";
 
 export const notion = new Client({ auth: process.env.NOTION_TOKEN });
 
@@ -40,6 +45,7 @@ export interface Post {
   title: string;
   slug: string;
   coverImage?: string;
+  coverImageOriginal?: string;
   description: string;
   date: string;
   content: string;
@@ -48,7 +54,6 @@ export interface Post {
   category?: string;
   headings: Array<{ level: number; text: string; slug: string }>;
 }
-
 
 const NOTION_COLORS: Record<
   string,
@@ -183,19 +188,6 @@ async function annotateCodeBlockColors(blocks: MdBlock[]): Promise<void> {
   }
 }
 
-export interface Post {
-  id: string;
-  title: string;
-  slug: string;
-  coverImage?: string;
-  description: string;
-  date: string;
-  content: string;
-  author?: string;
-  tags?: string[];
-  category?: string;
-}
-
 export async function getDatabaseStructure() {
   const database = await notion.databases.retrieve({
     database_id: process.env.NOTION_DATABASE_ID!,
@@ -213,7 +205,24 @@ export function getWordCount(content: string): number {
 
 export async function getPostsFromCache(): Promise<Post[]> {
   const data = await import("../../posts-cache.json");
-  return (data.default || data) as Post[];
+  const rawPosts = (data.default || data) as Post[];
+
+  return rawPosts.map((post) => {
+    const storedOriginal = post.coverImageOriginal && !post.coverImageOriginal.startsWith(NOTION_IMAGE_PROXY_PATH)
+      ? post.coverImageOriginal
+      : undefined;
+
+    const candidateOriginal = storedOriginal
+      ?? (post.coverImage && shouldProxyNotionImage(post.coverImage) ? post.coverImage : undefined);
+
+    const proxiedCover = buildNotionImageProxy(candidateOriginal ?? post.coverImage) ?? post.coverImage;
+
+    return {
+      ...post,
+      coverImageOriginal: candidateOriginal ?? storedOriginal ?? post.coverImageOriginal ?? undefined,
+      coverImage: proxiedCover,
+    };
+  });
 }
 
 export async function fetchPublishedPosts() {
@@ -266,6 +275,24 @@ export async function getPostFromNotion(pageId: string): Promise<Post | null> {
       firstParagraph.slice(0, 160) + (firstParagraph.length > 160 ? "..." : "");
 
     const properties = page.properties as any;
+
+    const coverImageOriginal = (() => {
+      const featured = properties["Featured Image"];
+      if (featured?.type === "files" && Array.isArray(featured.files) && featured.files.length) {
+        const file = featured.files[0];
+        if (file.type === "external") return file.external.url;
+        if (file.type === "file") return file.file.url;
+      }
+      if (typeof featured?.url === "string" && featured.url) {
+        return featured.url;
+      }
+      if (page.cover?.type === "external") return page.cover.external.url;
+      if (page.cover?.type === "file") return page.cover.file.url;
+      return undefined;
+    })();
+
+    const coverImage = buildNotionImageProxy(coverImageOriginal) ?? coverImageOriginal;
+
     const post: Post = {
       id: page.id,
       title: properties.Title.title[0]?.plain_text || "Untitled",
@@ -274,20 +301,8 @@ export async function getPostFromNotion(pageId: string): Promise<Post | null> {
           .toLowerCase()
           .replace(/[^a-z0-9]+/g, "-")
           .replace(/^-+|-+$/g, "") || "untitled",
-      coverImage: (() => {
-        const featured = properties["Featured Image"];
-        if (featured?.type === "files" && Array.isArray(featured.files) && featured.files.length) {
-          const file = featured.files[0];
-          if (file.type === "external") return file.external.url;
-          if (file.type === "file") return file.file.url;
-        }
-        if (typeof featured?.url === "string" && featured.url) {
-          return featured.url;
-        }
-        if (page.cover?.type === "external") return page.cover.external.url;
-        if (page.cover?.type === "file") return page.cover.file.url;
-        return undefined;
-      })(),
+      coverImage,
+      coverImageOriginal,
       description,
       date:
         properties["Published Date"]?.date?.start || new Date().toISOString(),

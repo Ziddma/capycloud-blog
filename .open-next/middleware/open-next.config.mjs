@@ -200,7 +200,27 @@ function resolveCdnInvalidation(value = "dummy") {
 }
 
 // open-next.config.ts
-var open_next_config_default = defineCloudflareConfig();
+var baseConfig = defineCloudflareConfig();
+var open_next_config_default = {
+  ...baseConfig,
+  functions: {
+    ...baseConfig.functions ?? {},
+    notionImages: {
+      runtime: "edge",
+      placement: "global",
+      entrypoint: "app/images/notion/route",
+      routes: ["app/images/notion/route"],
+      patterns: ["/images/notion*"]
+    },
+    notionCoverImages: {
+      runtime: "edge",
+      placement: "global",
+      entrypoint: "app/images/notion-cover/route",
+      routes: ["app/images/notion-cover/route"],
+      patterns: ["/images/notion-cover*"]
+    }
+  }
+};
 export {
   open_next_config_default as default
 };

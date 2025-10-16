@@ -8,5 +8,15 @@
   "assets": {
     "directory": ".open-next/assets",
     "binding": "ASSETS"
-  }
+  },
+    // Add this to your wrangler.jsonc
+  "kv_namespaces": [
+    {
+      "binding": "KV_BINDING",
+      "id": "8eea7dada58a48be9a798c553de3a026",
+      
+      // Optional: preview_id used when running `wrangler dev` for local dev
+      "preview_id": "8eea7dada58a48be9a798c553de3a026"
+    }
+  ]
 }
