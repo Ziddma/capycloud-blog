@@ -13,11 +13,15 @@
 # testing
 /coverage
 
-# next.js
+# next.js build output
 /.next/
 /out/
+.open-next/
 
-# production
+# wrangler temp files
+.wrangler/tmp/
+
+# production build artifacts
 /build
 
 # misc
