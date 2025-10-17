@@ -12,9 +12,17 @@ import {
 } from "../src/lib/image-proxy";
 
 const COVER_OUTPUT_DIR = path.join(process.cwd(), "public", "notion-images");
+const usedLocalImages = new Set<string>();
 
 function escapeRegExp(value: string): string {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function markLocalImage(localPath: string | null | undefined) {
+  if (!localPath) return;
+  if (!localPath.startsWith("/notion-images/")) return;
+  const fileName = path.basename(localPath);
+  usedLocalImages.add(fileName);
 }
 
 async function ensureLocalImage(sourceUrl: string): Promise<string | null> {
@@ -35,7 +43,9 @@ async function ensureLocalImage(sourceUrl: string): Promise<string | null> {
       await fs.promises.writeFile(targetPath, buffer);
     }
 
-    return `/notion-images/${hashedName}`;
+    const localPath = `/notion-images/${hashedName}`;
+    markLocalImage(localPath);
+    return localPath;
   } catch (error) {
     console.warn(`⚠️  Failed to cache image ${sourceUrl}:`, error);
     return null;
@@ -44,6 +54,11 @@ async function ensureLocalImage(sourceUrl: string): Promise<string | null> {
 
 async function ensureCoverImage(post: Post): Promise<Post> {
   if (!post.coverImageOriginal) {
+    return post;
+  }
+
+  if (post.coverImageOriginal.startsWith("/notion-images/")) {
+    markLocalImage(post.coverImageOriginal);
     return post;
   }
 
@@ -90,6 +105,11 @@ async function cacheInlineImages(post: Post): Promise<Post> {
     const rawUrl = match.groups?.url;
     if (!rawUrl) continue;
 
+    if (rawUrl.startsWith("/notion-images/")) {
+      markLocalImage(rawUrl);
+      continue;
+    }
+
     const originalUrl = resolveOriginalUrl(rawUrl);
     if (!originalUrl || !shouldProxyNotionImage(originalUrl)) {
       continue;
@@ -104,6 +124,7 @@ async function cacheInlineImages(post: Post): Promise<Post> {
     }
 
     const localPath = downloads.get(originalUrl)!;
+    markLocalImage(localPath);
     const escaped = escapeRegExp(rawUrl);
     const replacementRegex = new RegExp(
       `(?<=!\\[[^\\]]*\\]\\()${escaped}(?=(?:\\s+"[^"]*")?\\))`,
@@ -116,6 +137,28 @@ async function cacheInlineImages(post: Post): Promise<Post> {
     ...post,
     content: updatedContent,
   };
+}
+
+async function cleanupUnusedImages() {
+  try {
+    await fs.promises.mkdir(COVER_OUTPUT_DIR, { recursive: true });
+    const entries = await fs.promises.readdir(COVER_OUTPUT_DIR);
+    const usedFileNames = new Set(usedLocalImages);
+
+    const removals = entries
+      .filter((fileName) => !usedFileNames.has(fileName))
+      .map((fileName) =>
+        fs.promises
+          .unlink(path.join(COVER_OUTPUT_DIR, fileName))
+          .catch((error) =>
+            console.warn(`⚠️  Failed to remove unused image ${fileName}:`, error)
+          )
+      );
+
+    await Promise.all(removals);
+  } catch (error) {
+    console.warn("⚠️  Failed to clean up unused Notion images:", error);
+  }
 }
 
 async function cachePosts() {
@@ -147,6 +190,8 @@ async function cachePosts() {
 
     const cachePath = path.join(process.cwd(), "posts-cache.json");
     fs.writeFileSync(cachePath, JSON.stringify(allPosts, null, 2));
+
+    await cleanupUnusedImages();
 
     console.log(`✅ Successfully cached ${allPosts.length} posts.`);
   } catch (error) {

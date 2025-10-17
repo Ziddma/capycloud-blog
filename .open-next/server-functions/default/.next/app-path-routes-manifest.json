@@ -1,7 +1,7 @@
 {
-  "/robots.txt/route": "/robots.txt",
   "/favicon.ico/route": "/favicon.ico",
   "/_not-found/page": "/_not-found",
+  "/robots.txt/route": "/robots.txt",
   "/sitemap.xml/route": "/sitemap.xml",
   "/page": "/",
   "/posts/[slug]/page": "/posts/[slug]",
