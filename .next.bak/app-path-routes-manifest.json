@@ -1,0 +1,10 @@
+{
+  "/favicon.ico/route": "/favicon.ico",
+  "/_not-found/page": "/_not-found",
+  "/robots.txt/route": "/robots.txt",
+  "/sitemap.xml/route": "/sitemap.xml",
+  "/page": "/",
+  "/posts/[slug]/page": "/posts/[slug]",
+  "/images/notion-cover/route": "/images/notion-cover",
+  "/images/notion/route": "/images/notion"
+}

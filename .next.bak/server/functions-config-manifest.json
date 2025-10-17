@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "functions": {
+    "/images/notion-cover": {},
+    "/images/notion": {},
+    "/sitemap.xml": {},
+    "/": {},
+    "/posts/[slug]": {}
+  }
+}

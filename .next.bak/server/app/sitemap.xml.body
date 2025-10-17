@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<url>
+<loc>https://your-site.com</loc>
+<lastmod>2025-10-17T07:13:00.135Z</lastmod>
+<changefreq>daily</changefreq>
+<priority>1</priority>
+</url>
+<url>
+<loc>https://your-site.com/posts/post-installation-ocp-on-aws-part-2</loc>
+<lastmod>2025-07-18T00:00:00.000Z</lastmod>
+<changefreq>weekly</changefreq>
+<priority>0.8</priority>
+</url>
+<url>
+<loc>https://your-site.com/posts/sustainable-travel-how-to-reduce-your-carbon-footprint</loc>
+<lastmod>2025-06-08T00:00:00.000Z</lastmod>
+<changefreq>weekly</changefreq>
+<priority>0.8</priority>
+</url>
+<url>
+<loc>https://your-site.com/posts/deploy-ocp-on-aws-with-ipi-method-part-1</loc>
+<lastmod>2025-03-21T00:00:00.000Z</lastmod>
+<changefreq>weekly</changefreq>
+<priority>0.8</priority>
+</url>
+<url>
+<loc>https://your-site.com/posts/high-availibility-web-server-using-nginx-and-keepalived</loc>
+<lastmod>2024-06-13T00:00:00.000Z</lastmod>
+<changefreq>weekly</changefreq>
+<priority>0.8</priority>
+</url>
+</urlset>

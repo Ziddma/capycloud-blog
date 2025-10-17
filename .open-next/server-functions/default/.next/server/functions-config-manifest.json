@@ -1,9 +1,9 @@
 {
   "version": 1,
   "functions": {
-    "/images/notion": {},
-    "/images/notion-cover": {},
     "/sitemap.xml": {},
+    "/images/notion-cover": {},
+    "/images/notion": {},
     "/": {},
     "/posts/[slug]": {}
   }
