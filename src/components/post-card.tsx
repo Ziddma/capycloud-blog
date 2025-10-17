@@ -2,7 +2,7 @@ import Link from "next/link";
 import { format } from "date-fns";
 import { Post, getWordCount } from "@/lib/notion";
 import { Badge } from "@/components/ui/badge";
-import { calculateReadingTime } from "@/lib/utils";
+import { calculateReadingTime, getFirstContentParagraph } from "@/lib/utils";
 import {
   Card,
   CardContent,
@@ -19,6 +19,8 @@ interface PostCardProps {
 export default function PostCard({ post }: PostCardProps) {
   const wordCount = post.content ? getWordCount(post.content) : 0;
   const readingTime = calculateReadingTime(wordCount);
+  const previewText =
+    getFirstContentParagraph(post.content) ?? post.description;
 
   return (
     <Card className="group relative pt-0 overflow-hidden hover:shadow-xl transition-all duration-300 bg-card/50 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -69,7 +71,9 @@ export default function PostCard({ post }: PostCardProps) {
           </h2>
           <ArrowUpRight className="absolute top-[7.5rem] right-6 h-6 w-6 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 text-primary" />
         </div>
-        <p className="text-muted-foreground line-clamp-2">{post.description}</p>
+        {previewText && (
+          <p className="text-muted-foreground line-clamp-2">{previewText}</p>
+        )}
       </CardHeader>
       <CardContent>
         {post.author && (

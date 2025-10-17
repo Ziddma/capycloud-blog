@@ -6,7 +6,7 @@ import type { Metadata, ResolvingMetadata } from "next";
 import MarkdownClient from "@/components/markdown-client";
 
 import { Badge } from "@/components/ui/badge";
-import { calculateReadingTime } from "@/lib/utils";
+import { calculateReadingTime, getFirstContentParagraph, removeFirstContentParagraph } from "@/lib/utils";
 import { PostToc } from "@/components/post-toc";
 
 interface PostPageProps {
@@ -87,6 +87,10 @@ export default async function PostPage({ params }: PostPageProps) {
     post.coverImageOriginal && post.coverImageOriginal.startsWith("http")
       ? post.coverImageOriginal
       : "/images/fallback-cover.png";
+  const firstContentParagraph = getFirstContentParagraph(post.content);
+  const contentWithoutFirstParagraph = firstContentParagraph
+    ? removeFirstContentParagraph(post.content)
+    : post.content;
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -169,7 +173,7 @@ export default async function PostPage({ params }: PostPageProps) {
 
           <div className="mt-10 text-base leading-relaxed text-foreground">
             <MarkdownClient>
-              {post.content}
+              {contentWithoutFirstParagraph}
             </MarkdownClient>
           </div>
           </article>
