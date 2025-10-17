@@ -50,19 +50,19 @@
       "static/chunks/851-d10dfe5b8587fc7d.js",
       "static/chunks/app/posts/[slug]/page-0091fe97e8761082.js"
     ],
-    "/images/notion/route": [
-      "static/chunks/webpack-86dc539e4901d005.js",
-      "static/chunks/c6d12d9a-2300edd996ffd94c.js",
-      "static/chunks/975-6d1ca94b0e2ab68e.js",
-      "static/chunks/main-app-f8732281472352df.js",
-      "static/chunks/app/images/notion/route-e99cd2dfdd5be1a7.js"
-    ],
     "/images/notion-cover/route": [
       "static/chunks/webpack-86dc539e4901d005.js",
       "static/chunks/c6d12d9a-2300edd996ffd94c.js",
       "static/chunks/975-6d1ca94b0e2ab68e.js",
       "static/chunks/main-app-f8732281472352df.js",
       "static/chunks/app/images/notion-cover/route-a4caf9b8f5833e4f.js"
+    ],
+    "/images/notion/route": [
+      "static/chunks/webpack-86dc539e4901d005.js",
+      "static/chunks/c6d12d9a-2300edd996ffd94c.js",
+      "static/chunks/975-6d1ca94b0e2ab68e.js",
+      "static/chunks/main-app-f8732281472352df.js",
+      "static/chunks/app/images/notion/route-e99cd2dfdd5be1a7.js"
     ]
   }
 }

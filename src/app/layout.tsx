@@ -15,10 +15,10 @@ export const metadata: Metadata = {
     default: "Capycloud Blog",
     template: `%s | Capycloud `,
   },
-  description: "A blog built with Next.js and Notion",
+  description: "Pria Koleris Blog Who Love Capybara",
   openGraph: {
     title: "Capycloud Blog",
-    description: "A blog built with Next.js and Notion",
+    description: "Pria Koleris Blog Who Love Capybara",
     url: siteUrl,
     siteName: "Capycloud",
     images: [
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Capycloud Blog",
-    description: "A blog built with Next.js and Notion",
+    description: "Pria Koleris Blog Who Love Capybara",
     images: [`${siteUrl}/opengraph-image.png`],
   },
   robots: {
