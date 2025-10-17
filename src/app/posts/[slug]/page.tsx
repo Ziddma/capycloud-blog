@@ -24,7 +24,12 @@ export async function generateMetadata(
   if (!post) return { title: "Post Not Found" };
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://capycloud.my.id";
-  const coverImage = post.coverImage ?? post.coverImageOriginal ?? `${siteUrl}/opengraph-image.png`;
+  const coverImagePath = post.coverImage ?? post.coverImageOriginal;
+  const coverImage = coverImagePath
+    ? coverImagePath.startsWith("http")
+      ? coverImagePath
+      : `${siteUrl}${coverImagePath.startsWith("/") ? "" : "/"}${coverImagePath}`
+    : `${siteUrl}/opengraph-image.png`;
 
   return {
     title: post.title,
@@ -73,8 +78,15 @@ export default async function PostPage({ params }: PostPageProps) {
   const wordCount = post.content ? getWordCount(post.content) : 0;
   const readingTime = calculateReadingTime(wordCount);
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://your-site.com";
-  const coverImage = post.coverImage ?? post.coverImageOriginal ?? `${siteUrl}/opengraph-image.png`;
-  const coverImageFallback = post.coverImageOriginal && post.coverImageOriginal !== coverImage ? post.coverImageOriginal : undefined;
+  const coverImagePath = post.coverImage ?? post.coverImageOriginal ?? "/images/fallback-cover.png";
+  const coverImage =
+    coverImagePath.startsWith("http") || coverImagePath.startsWith("data:")
+      ? coverImagePath
+      : `${siteUrl}${coverImagePath.startsWith("/") ? "" : "/"}${coverImagePath}`;
+  const coverImageFallback =
+    post.coverImageOriginal && post.coverImageOriginal.startsWith("http")
+      ? post.coverImageOriginal
+      : "/images/fallback-cover.png";
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -102,11 +114,11 @@ export default async function PostPage({ params }: PostPageProps) {
       <div className="mx-auto w-full max-w-4xl px-4 sm:px-6 lg:pl-0 lg:pr-28 xl:mt-8">
         <main className="px-auto xl:pl-0 2xl:pl-0">
           <article className="w-full">
-          {(post.coverImage || post.coverImageOriginal) && (
+          {coverImagePath && (
             <div className="relative mb-10 aspect-[16/9] overflow-hidden rounded-3xl border border-border/40 bg-muted/20">
               <SmartImage
-                src={coverImage}
-                fallbackSrc={coverImageFallback ?? "/images/fallback-cover.png"}
+                src={coverImagePath}
+                fallbackSrc={coverImageFallback}
                 alt={post.title}
                 width={1200}
                 height={630}

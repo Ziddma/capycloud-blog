@@ -208,6 +208,19 @@ export async function getPostsFromCache(): Promise<Post[]> {
   const rawPosts = (data.default || data) as Post[];
 
   return rawPosts.map((post) => {
+    const localCoverPath =
+      post.coverImage?.startsWith("/notion-images/") || post.coverImageOriginal?.startsWith("/notion-images/")
+        ? post.coverImage ?? post.coverImageOriginal
+        : undefined;
+
+    if (localCoverPath) {
+      return {
+        ...post,
+        coverImage: localCoverPath,
+        coverImageOriginal: localCoverPath,
+      };
+    }
+
     const storedOriginal = post.coverImageOriginal && !post.coverImageOriginal.startsWith(NOTION_IMAGE_PROXY_PATH)
       ? post.coverImageOriginal
       : undefined;
@@ -291,7 +304,7 @@ export async function getPostFromNotion(pageId: string): Promise<Post | null> {
       return undefined;
     })();
 
-    const coverImage = buildNotionImageProxy(coverImageOriginal) ?? coverImageOriginal;
+    const coverImage = coverImageOriginal;
 
     const post: Post = {
       id: page.id,
@@ -319,4 +332,3 @@ export async function getPostFromNotion(pageId: string): Promise<Post | null> {
     return null;
   }
 }
-

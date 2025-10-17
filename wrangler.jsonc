@@ -1,6 +1,6 @@
 {
   "main": ".open-next/worker.js",
-  "name": "notion-blog",
+  "name": "capycloud-blog",
   "compatibility_date": "2025-03-25",
   "compatibility_flags": [
     "nodejs_compat"
@@ -9,14 +9,21 @@
     "directory": ".open-next/assets",
     "binding": "ASSETS"
   },
-    // Add this to your wrangler.jsonc
   "kv_namespaces": [
     {
       "binding": "KV_BINDING",
       "id": "8eea7dada58a48be9a798c553de3a026",
-      
-      // Optional: preview_id used when running `wrangler dev` for local dev
       "preview_id": "8eea7dada58a48be9a798c553de3a026"
     }
-  ]
+  ],
+  "observability": {
+    "enabled": false,
+    "head_sampling_rate": 1,
+    "logs": {
+      "enabled": true,
+      "head_sampling_rate": 1,
+      "persist": true,
+      "invocation_logs": true
+    }
+  }
 }

@@ -38,7 +38,7 @@
       "static/chunks/937-ebd2d4095d1e6759.js",
       "static/chunks/61-23712cbea768e7f9.js",
       "static/chunks/751-a755261f77f6d7d3.js",
-      "static/chunks/app/page-372d32ec097a7163.js"
+      "static/chunks/app/page-4e44b78cb4c52a9b.js"
     ],
     "/posts/[slug]/page": [
       "static/chunks/webpack-e3e7314702e33e9b.js",
@@ -47,7 +47,7 @@
       "static/chunks/main-app-f8732281472352df.js",
       "static/chunks/937-ebd2d4095d1e6759.js",
       "static/chunks/851-d10dfe5b8587fc7d.js",
-      "static/chunks/app/posts/[slug]/page-c125b8a32dd5b633.js"
+      "static/chunks/app/posts/[slug]/page-f6fb6e0fe3379fc3.js"
     ],
     "/images/notion-cover/route": [
       "static/chunks/webpack-e3e7314702e33e9b.js",

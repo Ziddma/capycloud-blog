@@ -1,7 +1,7 @@
 "use client";
 
 import Image, { type ImageProps } from "next/image";
-import { useEffect, useMemo, useState, type ElementType } from "react";
+import { useEffect, useMemo, useState, type ElementType, type SyntheticEvent } from "react";
 import { cn } from "@/lib/utils";
 
 type WrapperOption = "div" | "span";
@@ -39,7 +39,7 @@ export function SmartImage({
   const [naturalRatio, setNaturalRatio] = useState<string | null>(null);
 
   const placeholderStyle = useMemo(() => {
-    if (isFillLayout) return undefined;
+    if (isFillLayout) return { width: "100%", height: "100%" };
     if (naturalRatio) return { aspectRatio: naturalRatio, width: "100%" };
 
     if (typeof width === "number" && typeof height === "number") {
@@ -56,9 +56,14 @@ export function SmartImage({
   useEffect(() => {
     setCurrentSrc(src);
     setAttempt(0);
-    setLoading(true);
     setFailed(false);
     setNaturalRatio(null);
+
+    if (typeof src === "string" && (src.startsWith("/") || src.startsWith("data:"))) {
+      setLoading(false);
+    } else {
+      setLoading(true);
+    }
   }, [src]);
 
   const scheduleRetry = (nextAttempt: number) => {
@@ -83,10 +88,44 @@ export function SmartImage({
     }
   };
 
-  const handleLoad = (result?: { naturalWidth: number; naturalHeight: number }) => {
-    if (result?.naturalWidth && result?.naturalHeight) {
-      setNaturalRatio(`${result.naturalWidth} / ${result.naturalHeight}`);
+  const handleLoad = (
+    result?:
+      | { naturalWidth: number; naturalHeight: number }
+      | HTMLImageElement
+      | SyntheticEvent<HTMLImageElement>
+  ) => {
+    const applyRatio = (width: number, height: number) => {
+      if (width && height) {
+        setNaturalRatio(`${width} / ${height}`);
+      }
+    };
+
+    if (!result) {
+      setLoading(false);
+      return;
     }
+
+    if ("naturalWidth" in result && "naturalHeight" in result) {
+      applyRatio(result.naturalWidth, result.naturalHeight);
+      setLoading(false);
+      return;
+    }
+
+    if ("currentTarget" in result) {
+      const target = result.currentTarget;
+      if (target instanceof HTMLImageElement) {
+        applyRatio(target.naturalWidth, target.naturalHeight);
+        setLoading(false);
+        return;
+      }
+    }
+
+    if (result instanceof HTMLImageElement) {
+      applyRatio(result.naturalWidth, result.naturalHeight);
+      setLoading(false);
+      return;
+    }
+
     setLoading(false);
   };
 
@@ -118,6 +157,7 @@ export function SmartImage({
           height={height}
           unoptimized
           onError={handleError}
+          onLoad={handleLoad}
           onLoadingComplete={handleLoad}
           className={cn(props.className, loading ? "invisible" : "block")}
         />
@@ -127,7 +167,7 @@ export function SmartImage({
 
   return (
     <WrapperComponent
-      className={cn("relative block", wrapperClassName)}
+      className={cn("relative block", wrapperClassName, isFillLayout && "h-full w-full")}
       style={placeholderStyle}
     >
       {loading && (
@@ -144,6 +184,7 @@ export function SmartImage({
         height={height}
         unoptimized
         onError={handleError}
+        onLoad={handleLoad}
         onLoadingComplete={handleLoad}
         className={cn(props.className, loading ? "invisible" : "block")}
       />

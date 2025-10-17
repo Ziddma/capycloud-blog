@@ -205,12 +205,13 @@ const components: Components = {
       return null;
     }
 
-    const proxiedSrc = buildNotionImageProxy(src) ?? src;
+    const isLocal = src.startsWith("/") || src.startsWith("data:");
+    const resolvedSrc = isLocal ? src : buildNotionImageProxy(src) ?? src;
 
     return (
       <SmartImage
-        src={proxiedSrc}
-        fallbackSrc={typeof src === "string" ? src : undefined}
+        src={resolvedSrc}
+        fallbackSrc={isLocal ? "/images/fallback-cover.png" : undefined}
         alt={alt || ""}
         width={1024}
         height={576}

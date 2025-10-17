@@ -6,13 +6,14 @@
         "dev": "pnpm run cache:posts && next dev --turbopack",
         "prebuild": "pnpm run cache:posts",
         "build": "next build",
-        "cf-build": "node --require ./scripts/force-esbuild.cjs ./node_modules/@opennextjs/cloudflare/dist/cli/index.js build",
+        "cf-build": "node --require ./scripts/force-esbuild.cjs ./node_modules/@opennextjs/cloudflare/dist/cli/index.js build && node scripts/patch-open-next-worker.mjs",
         "start": "next start",
         "lint": "next lint",
         "cache:posts": "tsx scripts/cache-posts.ts",
-        "preview": "node --require ./scripts/force-esbuild.cjs ./node_modules/@opennextjs/cloudflare/dist/cli/index.js build && node --require ./scripts/force-esbuild.cjs ./node_modules/@opennextjs/cloudflare/dist/cli/index.js preview",
-        "deploy": "node --require ./scripts/force-esbuild.cjs ./node_modules/@opennextjs/cloudflare/dist/cli/index.js build && node --require ./scripts/force-esbuild.cjs ./node_modules/@opennextjs/cloudflare/dist/cli/index.js deploy",
-        "cf-typegen": "node --require ./scripts/force-esbuild.cjs ./node_modules/wrangler/bin/wrangler.js types --env-interface CloudflareEnv cloudflare-env.d.ts"
+        "preview": "node --require ./scripts/force-esbuild.cjs ./node_modules/@opennextjs/cloudflare/dist/cli/index.js build && node scripts/patch-open-next-worker.mjs && node --require ./scripts/force-esbuild.cjs ./node_modules/@opennextjs/cloudflare/dist/cli/index.js preview",
+        "deploy": "node --require ./scripts/force-esbuild.cjs ./node_modules/@opennextjs/cloudflare/dist/cli/index.js build && node scripts/patch-open-next-worker.mjs && node --require ./scripts/force-esbuild.cjs ./node_modules/@opennextjs/cloudflare/dist/cli/index.js deploy",
+        "cf-typegen": "node --require ./scripts/force-esbuild.cjs ./node_modules/wrangler/bin/wrangler.js types --env-interface CloudflareEnv cloudflare-env.d.ts",
+        "postinstall": "node scripts/patch-open-next-worker.mjs"
     },
     "dependencies": {
         "@hookform/resolvers": "^5.0.1",
