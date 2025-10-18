@@ -1,0 +1,3 @@
+export const production = {"NOTION_TOKEN":"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","NOTION_DATABASE_ID":"2784a369535d809c910affb8db194728","NOTION_WEBHOOK_SECRET":"super-secret-webhook-token","NEXT_PUBLIC_CACHE_API_URL":"https://capycloud.my.id/api/cache/posts","CACHE_API_BASE_URL":"https://capycloud.my.id/api/cache"};
+export const development = {"NOTION_TOKEN":"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","NOTION_DATABASE_ID":"2784a369535d809c910affb8db194728","NOTION_WEBHOOK_SECRET":"super-secret-webhook-token","NEXT_PUBLIC_CACHE_API_URL":"https://capycloud.my.id/api/cache/posts","CACHE_API_BASE_URL":"https://capycloud.my.id/api/cache"};
+export const test = {};
