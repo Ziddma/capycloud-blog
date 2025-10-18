@@ -7,7 +7,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://your-site.com";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://capycloud.my.id";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),

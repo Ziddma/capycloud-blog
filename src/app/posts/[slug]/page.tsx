@@ -77,7 +77,7 @@ export default async function PostPage({ params }: PostPageProps) {
 
   const wordCount = post.content ? getWordCount(post.content) : 0;
   const readingTime = calculateReadingTime(wordCount);
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://your-site.com";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://capycloud.my.id";
   const coverImagePath = post.coverImage ?? post.coverImageOriginal ?? "/images/fallback-cover.png";
   const coverImage =
     coverImagePath.startsWith("http") || coverImagePath.startsWith("data:")
