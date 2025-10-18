@@ -1,31 +1,35 @@
 {
-  "main": ".open-next/worker.js",
-  "name": "capycloud-blog",
-  "compatibility_date": "2025-03-25",
-  "compatibility_flags": [
-    "nodejs_compat"
-  ],
-  "assets": {
-    "directory": ".open-next/assets",
-    "binding": "ASSETS"
-  },
-  "kv_namespaces": [
-    {
-      "binding": "KV_BINDING",
-      "id": "8eea7dada58a48be9a798c553de3a026",
-      "preview_id": "8eea7dada58a48be9a798c553de3a026"
-    }
-  ],
-  "vars": {
-    "NOTION_DATABASE_ID": "2784a369535d809c910affb8db194728"
-  },
-  "observability": {
-    "enabled": false,
-    "head_sampling_rate": 1,
-    "logs": {
-      "enabled": true,
-      "head_sampling_rate": 1,
-      "invocation_logs": true
-    }
-  }
+	"main": ".open-next/worker.js",
+	"name": "capycloud-blog",
+	"compatibility_date": "2025-03-25",
+	"compatibility_flags": [
+		"nodejs_compat"
+	],
+	"assets": {
+		"directory": ".open-next/assets",
+		"binding": "ASSETS"
+	},
+	"kv_namespaces": [
+		{
+			"binding": "KV_BINDING",
+			"id": "8eea7dada58a48be9a798c553de3a026",
+			"preview_id": "8eea7dada58a48be9a798c553de3a026"
+		},
+		{
+			"binding": "NOTION_CACHE",
+			"id": "2809c672c9064b8b81c2a88a18ac7913"
+		}
+	],
+	"vars": {
+		"NOTION_DATABASE_ID": "2784a369535d809c910affb8db194728"
+	},
+	"observability": {
+		"enabled": false,
+		"head_sampling_rate": 1,
+		"logs": {
+			"enabled": true,
+			"head_sampling_rate": 1,
+			"invocation_logs": true
+		}
+	}
 }
