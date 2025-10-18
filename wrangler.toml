@@ -1,0 +1,12 @@
+name = "capycloud-realtime"
+pages_build_output_dir = ".open-next"
+compatibility_date = "2025-03-25"
+compatibility_flags = ["nodejs_compat"]
+
+kv_namespaces = [
+  { binding = "KV_BINDING", id = "8eea7dada58a48be9a798c553de3a026", preview_id = "8eea7dada58a48be9a798c553de3a026" }
+]
+
+[vars]
+NEXT_PUBLIC_CACHE_API_URL = "https://capycloud-realtime.pages.dev"
+CACHE_API_BASE_URL = "https://capycloud-realtime.pages.dev"

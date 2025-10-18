@@ -78,6 +78,15 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
     return makeResponse("Bad Request", { status: 400 });
   }
 
+  if (payload?.type === "webhook_verification" && payload?.challenge) {
+    return makeResponse(JSON.stringify({ challenge: payload.challenge }), {
+      status: 200,
+      headers: {
+        "content-type": "application/json",
+      },
+    });
+  }
+
   const events: any[] = Array.isArray(payload?.events)
     ? payload.events
     : payload?.event

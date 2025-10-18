@@ -2,9 +2,9 @@
   "version": 1,
   "functions": {
     "/sitemap.xml": {},
-    "/images/notion-cover": {},
     "/images/notion": {},
-    "/posts/[slug]": {},
-    "/": {}
+    "/images/notion-cover": {},
+    "/": {},
+    "/posts/[slug]": {}
   }
 }

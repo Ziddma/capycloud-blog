@@ -24,13 +24,67 @@ function getBridge() {
   return notionBridge;
 }
 
-function resolveCacheApiBase(): string | null {
+// Builds the posts cache endpoint, accepting either a base origin or a full URL.
+function resolveCacheApiUrl(): string | null {
   const candidate =
     process.env.NEXT_PUBLIC_CACHE_API_URL ||
     process.env.CACHE_API_BASE_URL ||
     process.env.NEXT_PUBLIC_SITE_URL;
   if (!candidate) return null;
-  return candidate.endsWith("/") ? candidate.slice(0, -1) : candidate;
+
+  const trimmed = candidate.trim();
+  if (!trimmed) return null;
+
+  const stripTrailingSlash = (value: string) =>
+    value.replace(/\/+$/, "");
+
+  const ensureEndpoint = (value: string) => {
+    const withoutTrailing = stripTrailingSlash(value);
+    if (/\/api\/cache\/posts$/i.test(withoutTrailing)) {
+      return withoutTrailing;
+    }
+    return `${withoutTrailing}/api/cache/posts`;
+  };
+
+  if (/^[a-z][a-z\d+\-.]*:\/\//i.test(trimmed)) {
+    try {
+      const url = new URL(trimmed);
+      url.search = "";
+      url.hash = "";
+      const path = stripTrailingSlash(url.pathname);
+
+      if (/\/api\/cache\/posts$/i.test(path)) {
+        url.pathname = path;
+        return stripTrailingSlash(url.toString());
+      }
+
+      url.pathname = "/api/cache/posts";
+      return stripTrailingSlash(url.toString());
+    } catch {
+      // fall through to the plain string handling below
+    }
+  }
+
+  if (/^\//.test(trimmed)) {
+    return ensureEndpoint(trimmed);
+  }
+
+  // Treat bare domains or other strings as HTTPS origins by default
+  const assumedUrl = `https://${trimmed}`;
+  try {
+    const url = new URL(assumedUrl);
+    url.search = "";
+    url.hash = "";
+    const path = stripTrailingSlash(url.pathname);
+    if (/\/api\/cache\/posts$/i.test(path)) {
+      url.pathname = path;
+      return stripTrailingSlash(url.toString());
+    }
+    url.pathname = "/api/cache/posts";
+    return stripTrailingSlash(url.toString());
+  } catch {
+    return ensureEndpoint(trimmed);
+  }
 }
 
 function normalizePostImages(post: Post): Post {
@@ -84,11 +138,14 @@ export function getWordCount(content: string): number {
 }
 
 export async function getPostsFromCache(): Promise<Post[]> {
-  const apiBase = resolveCacheApiBase();
+  const apiUrl = resolveCacheApiUrl();
+  const isStaticBuild =
+    typeof process !== "undefined" &&
+    process.env?.NEXT_PHASE === "phase-production-build";
 
-  if (apiBase) {
+  if (apiUrl && !isStaticBuild) {
     try {
-      const res = await fetch(`${apiBase}/api/cache/posts`, {
+      const res = await fetch(apiUrl, {
         cache: "no-store",
       });
       if (res.ok) {
@@ -128,4 +185,3 @@ export async function getPostFromNotion(pageId: string): Promise<Post | null> {
 }
 
 export type { Post };
-
